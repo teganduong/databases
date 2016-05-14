@@ -19,4 +19,4 @@ connection.connect(function(err) {
   console.log('connected to database!');
 });
 
-exports.db = connection;
+module.exports = connection;
