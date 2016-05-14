@@ -6,19 +6,22 @@ module.exports = {
   messages: {
     // a function which produces all the messages
     get: function (callback) {
-      var queryString = 'SELECT * FROM messages';
+      var queryString = 'SELECT m.message, m.roomname, m.userid, users.id \
+      FROM messages m left outer join users ON m.userid = users.id';
+
       db.query(queryString, function(err, results) {
         if (err) {
           console.error('Error in retrieving messages: ', err);
         }
-        callback(results);
+        callback(err, results);
       });
     }, 
 
     // a function which can be used to insert a message into the database
-    post: function () {
-      var queryString = 'INSERT INTO messages (userid, msg, roomname) VALUES (?, ?, ?)';
-      var queryArgs = [1, 'Hello', 'main'];
+    post: function (params, callback) {
+      var queryString = 'INSERT INTO messages (userid, message, roomname) VALUES (?, ?, ?)';
+      console.log('>>>>>params inside messages model of post: ', params);
+      var queryArgs = [params.userid, params.message, params.roomname];
       db.query(queryString, queryArgs, function(err, response) {
         if (err) {
           console.error('Error in posting message to database: ', err);
@@ -37,13 +40,13 @@ module.exports = {
           console.error('Error in retrieving users: ', err);
         }
         console.log('all users: ', results);
-        callback(results);
+        callback(err, results);
       });
     },
 
-    post: function () {
+    post: function (params, callback) {
       var queryString = 'INSERT INTO users (username) VALUES (?)';
-      var queryArgs = 'tegan';
+      var queryArgs = [params.username];
       db.query(queryString, queryArgs, function(err, response) {
         if (err) {
           console.error('Error in posting user to database: ', err);
