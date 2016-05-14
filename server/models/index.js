@@ -19,14 +19,14 @@ module.exports = {
 
     // a function which can be used to insert a message into the database
     post: function (params, callback) {
-      var queryString = 'INSERT INTO messages (userid, message, roomname) VALUES (?, ?, ?)';
-      console.log('>>>>>params inside messages model of post: ', params);
-      var queryArgs = [params.userid, params.message, params.roomname];
-      db.query(queryString, queryArgs, function(err, response) {
+      var queryString = 'INSERT INTO messages (userid, message, roomname) VALUES ((select id from users where username = ?), ?, ?)';
+
+      db.query(queryString, params, function(err, results) {
         if (err) {
           console.error('Error in posting message to database: ', err);
         }
         console.log('message successfully inserted into database!');
+        callback(err, results);
       });
     } 
   },
@@ -35,6 +35,7 @@ module.exports = {
     
     get: function (callback) {
       var queryString = 'SELECT * FROM users';
+
       db.query(queryString, function(err, results) {
         if (err) {
           console.error('Error in retrieving users: ', err);
@@ -46,12 +47,13 @@ module.exports = {
 
     post: function (params, callback) {
       var queryString = 'INSERT INTO users (username) VALUES (?)';
-      var queryArgs = [params.username];
-      db.query(queryString, queryArgs, function(err, response) {
+      
+      db.query(queryString, params, function(err, results) {
         if (err) {
           console.error('Error in posting user to database: ', err);
         }
         console.log('user successfully inserted into database!');
+        callback(err, results);
       });
     }
   }

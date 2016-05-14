@@ -18,12 +18,10 @@ module.exports = {
     // a function which handles posting a message to the database
     post: function (req, res) {
       console.log('req.body in post of messages controller: ', req.body);
-      models.messages.post({
-        userid: req.body.userid,
-        message: req.body.message,
-        roomname: req.body.roomname
-      }, function(err, result) {
-        res.send(result);
+      var params = [req.body.userid, req.body.message, req.body.roomname];
+      models.messages.post(params, function(err, result) {
+        if (err) { console.error('error in posting msg to db in controller'); }
+        res.sendStatus(201);
       });
     } 
   },
@@ -36,10 +34,10 @@ module.exports = {
     },
     post: function (req, res) {
       console.log('req.body in post of users controller: ', req.body);
-      models.users.post({
-        username: req.body.username
-      }, function(err, result) {
-        res.send(result);
+      var params = [req.body.username];
+      models.users.post(params, function(err, result) {
+        if (err) { console.error('error in posting user to db in controller'); }
+        res.sendStatus(201);
       });
     }
   }
